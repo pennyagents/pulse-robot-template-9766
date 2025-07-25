@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,9 +13,8 @@ const ReportsManagement = ({
 }: {
   permissions: any;
 }) => {
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [isPanchayathReportOpen, setIsPanchayathReportOpen] = useState(false);
@@ -33,7 +32,12 @@ const ReportsManagement = ({
       
       let query = supabase.from('registrations').select(`
         *,
-        categories(name)
+        categories(name),
+        registration_verifications(
+          id,
+          verified_by,
+          verified_at
+        )
       `).eq('status', 'approved').order('approved_date', { ascending: false });
       
       if (startDate) {
@@ -52,25 +56,65 @@ const ReportsManagement = ({
     enabled: !!(startDate || endDate)
   });
 
-  // Handle verification
-  const handleVerify = (registrationId: string) => {
-    const currentAdmin = permissions.username || 'Admin'; // Get current admin username
-    setVerifiedRegistrations(prev => ({
-      ...prev,
-      [registrationId]: {
-        verifiedBy: currentAdmin,
-        verifiedAt: new Date().toLocaleString('en-IN')
-      }
-    }));
+  // Handle verification - store in database
+  const handleVerify = async (registrationId: string) => {
+    try {
+      // Get current admin from localStorage
+      const adminSession = localStorage.getItem('adminSession');
+      const currentAdmin = adminSession ? JSON.parse(adminSession).username : 'Admin';
+      
+      const { error } = await supabase
+        .from('registration_verifications')
+        .insert({
+          registration_id: registrationId,
+          verified_by: currentAdmin
+        });
+
+      if (error) throw error;
+
+      // Refresh the data to show the verification
+      toast({
+        title: "Verification Successful",
+        description: "Registration has been verified successfully."
+      });
+      
+      // Refetch the approved registrations to show updated verification status
+      queryClient.invalidateQueries({ queryKey: ['approved-registrations'] });
+    } catch (error) {
+      console.error('Error verifying registration:', error);
+      toast({
+        title: "Verification Failed",
+        description: "Failed to verify registration. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  // Handle clear verification
-  const handleClearVerification = (registrationId: string) => {
-    setVerifiedRegistrations(prev => {
-      const newState = { ...prev };
-      delete newState[registrationId];
-      return newState;
-    });
+  // Handle clear verification - remove from database
+  const handleClearVerification = async (registrationId: string) => {
+    try {
+      const { error } = await supabase
+        .from('registration_verifications')
+        .delete()
+        .eq('registration_id', registrationId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Verification Cleared",
+        description: "Verification has been cleared successfully."
+      });
+      
+      // Refetch the approved registrations to show updated verification status
+      queryClient.invalidateQueries({ queryKey: ['approved-registrations'] });
+    } catch (error) {
+      console.error('Error clearing verification:', error);
+      toast({
+        title: "Clear Failed",
+        description: "Failed to clear verification. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   // Fetch registration summary by panchayath
@@ -408,7 +452,10 @@ const ReportsManagement = ({
                     </thead>
                     <tbody>
                       {approvedRegistrations.map((registration: any) => {
-                        const isVerified = verifiedRegistrations[registration.id];
+                        // Check if this registration is verified from database
+                        const verificationRecord = registration.registration_verifications?.[0];
+                        const isVerified = !!verificationRecord;
+                        
                         return (
                           <tr key={registration.id} className="hover:bg-gray-50">
                             <td className="border border-gray-200 px-3 py-2 font-medium">{registration.name}</td>
@@ -423,10 +470,10 @@ const ReportsManagement = ({
                               {isVerified ? (
                                 <div className="space-y-1">
                                   <div className="text-xs text-green-600 font-medium">
-                                    Verified by: {isVerified.verifiedBy}
+                                    Verified by: {verificationRecord.verified_by}
                                   </div>
                                   <div className="text-xs text-muted-foreground">
-                                    {isVerified.verifiedAt}
+                                    {new Date(verificationRecord.verified_at).toLocaleString('en-IN')}
                                   </div>
                                   <Button
                                     size="sm"
