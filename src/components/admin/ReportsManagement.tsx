@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import DateRangeFilter from './reports/DateRangeFilter';
 import ActivePanchayathReport from './reports/ActivePanchayathReport';
 import { VerifiedRegistrationsExport } from './reports/VerifiedRegistrationsExport';
+import { exportToExcel, exportToPDF } from './registrations/exportUtils';
 const ReportsManagement = ({
   permissions
 }: {
@@ -443,12 +444,68 @@ const ReportsManagement = ({
             <div className="mt-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">Approved Registrations in Date Range</h3>
-                <VerifiedRegistrationsExport 
-                  verifiedRegistrations={approvedRegistrations?.filter((reg: any) => 
-                    reg.registration_verifications && reg.registration_verifications.length > 0
-                  ) || []}
-                  dateRange={{ startDate, endDate }}
-                />
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => {
+                      try {
+                        // Transform the data to match expected format
+                        const registrationsForExport = approvedRegistrations?.map((reg: any) => ({
+                          ...reg,
+                          panchayaths: reg.panchayaths || { name: '', district: '' },
+                          categories: reg.categories || { name: '' }
+                        })) || [];
+                        exportToExcel(registrationsForExport);
+                      } catch (error) {
+                        console.error('Excel export failed:', error);
+                        toast({
+                          title: "Export Failed",
+                          description: "Failed to export Excel file.",
+                          variant: "destructive"
+                        });
+                      }
+                    }}
+                    variant="outline"
+                    size="sm"
+                    disabled={!approvedRegistrations || approvedRegistrations.length === 0}
+                    className="flex items-center gap-2"
+                  >
+                    <FileSpreadsheet className="h-4 w-4" />
+                    Export Excel
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      try {
+                        // Transform the data to match expected format
+                        const registrationsForExport = approvedRegistrations?.map((reg: any) => ({
+                          ...reg,
+                          panchayaths: reg.panchayaths || { name: '', district: '' },
+                          categories: reg.categories || { name: '' }
+                        })) || [];
+                        exportToPDF(registrationsForExport);
+                      } catch (error) {
+                        console.error('PDF export failed:', error);
+                        toast({
+                          title: "Export Failed",
+                          description: "Failed to export PDF file.",
+                          variant: "destructive"
+                        });
+                      }
+                    }}
+                    variant="outline"
+                    size="sm"
+                    disabled={!approvedRegistrations || approvedRegistrations.length === 0}
+                    className="flex items-center gap-2"
+                  >
+                    <Download className="h-4 w-4" />
+                    Export PDF
+                  </Button>
+                  <VerifiedRegistrationsExport 
+                    verifiedRegistrations={approvedRegistrations?.filter((reg: any) => 
+                      reg.registration_verifications && reg.registration_verifications.length > 0
+                    ) || []}
+                    dateRange={{ startDate, endDate }}
+                  />
+                </div>
               </div>
               {loadingApprovedRegistrations ? (
                 <div className="text-center py-8">
