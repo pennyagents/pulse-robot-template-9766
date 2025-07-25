@@ -20,6 +20,7 @@ const ReportsManagement = ({
   const [isPanchayathReportOpen, setIsPanchayathReportOpen] = useState(false);
   const [isActiveReportOpen, setIsActiveReportOpen] = useState(false);
   const [isCategoryReportOpen, setIsCategoryReportOpen] = useState(false);
+  const [showVerificationColumn, setShowVerificationColumn] = useState(true);
 
   // State for verification management
   const [verifiedRegistrations, setVerifiedRegistrations] = useState<Record<string, { verifiedBy: string; verifiedAt: string }>>({});
@@ -423,7 +424,15 @@ const ReportsManagement = ({
           <CardTitle>Date Range Filter</CardTitle>
         </CardHeader>
         <CardContent>
-          <DateRangeFilter startDate={startDate} endDate={endDate} onStartDateChange={setStartDate} onEndDateChange={setEndDate} onClear={handleClearDateFilter} />
+          <DateRangeFilter 
+            startDate={startDate} 
+            endDate={endDate} 
+            onStartDateChange={setStartDate} 
+            onEndDateChange={setEndDate} 
+            onClear={handleClearDateFilter}
+            showVerificationColumn={showVerificationColumn}
+            onToggleVerificationColumn={() => setShowVerificationColumn(!showVerificationColumn)}
+          />
           <p className="text-sm text-muted-foreground mt-2">
             Filters Total Registrations, Fee Collection, and Pending Amount
           </p>
@@ -447,7 +456,7 @@ const ReportsManagement = ({
                         <th className="border border-gray-200 px-3 py-2 text-left">Fee Paid</th>
                         <th className="border border-gray-200 px-3 py-2 text-left">Approved By</th>
                         <th className="border border-gray-200 px-3 py-2 text-left">Approved Date</th>
-                        <th className="border border-gray-200 px-3 py-2 text-left">Verify</th>
+                        {showVerificationColumn && <th className="border border-gray-200 px-3 py-2 text-left">Verify</th>}
                       </tr>
                     </thead>
                     <tbody>
@@ -466,34 +475,36 @@ const ReportsManagement = ({
                             <td className="border border-gray-200 px-3 py-2">
                               {registration.approved_date ? new Date(registration.approved_date).toLocaleDateString('en-IN') : '-'}
                             </td>
-                            <td className="border border-gray-200 px-3 py-2">
-                              {isVerified ? (
-                                <div className="space-y-1">
-                                  <div className="text-xs text-green-600 font-medium">
-                                    Verified by: {verificationRecord.verified_by}
+                            {showVerificationColumn && (
+                              <td className="border border-gray-200 px-3 py-2">
+                                {isVerified ? (
+                                  <div className="space-y-1">
+                                    <div className="text-xs text-green-600 font-medium">
+                                      Verified by: {verificationRecord.verified_by}
+                                    </div>
+                                    <div className="text-xs text-muted-foreground">
+                                      {new Date(verificationRecord.verified_at).toLocaleString('en-IN')}
+                                    </div>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => handleClearVerification(registration.id)}
+                                      className="text-xs px-2 py-1 h-auto"
+                                    >
+                                      Clear
+                                    </Button>
                                   </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    {new Date(verificationRecord.verified_at).toLocaleString('en-IN')}
-                                  </div>
+                                ) : (
                                   <Button
                                     size="sm"
-                                    variant="outline"
-                                    onClick={() => handleClearVerification(registration.id)}
-                                    className="text-xs px-2 py-1 h-auto"
+                                    onClick={() => handleVerify(registration.id)}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 h-auto"
                                   >
-                                    Clear
+                                    Verify
                                   </Button>
-                                </div>
-                              ) : (
-                                <Button
-                                  size="sm"
-                                  onClick={() => handleVerify(registration.id)}
-                                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 h-auto"
-                                >
-                                  Verify
-                                </Button>
-                              )}
-                            </td>
+                                )}
+                              </td>
+                            )}
                           </tr>
                         );
                       })}
