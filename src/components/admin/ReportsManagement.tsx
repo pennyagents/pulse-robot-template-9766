@@ -8,6 +8,7 @@ import { BarChart3, TrendingUp, Users, MapPin, DollarSign, Download, FileSpreads
 import { useToast } from '@/hooks/use-toast';
 import DateRangeFilter from './reports/DateRangeFilter';
 import ActivePanchayathReport from './reports/ActivePanchayathReport';
+import { VerifiedRegistrationsExport } from './reports/VerifiedRegistrationsExport';
 const ReportsManagement = ({
   permissions
 }: {
@@ -440,7 +441,15 @@ const ReportsManagement = ({
           {/* Approved Registrations Table when date range is selected */}
           {(startDate || endDate) && (
             <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-4">Approved Registrations in Date Range</h3>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">Approved Registrations in Date Range</h3>
+                <VerifiedRegistrationsExport 
+                  verifiedRegistrations={approvedRegistrations?.filter((reg: any) => 
+                    reg.registration_verifications && reg.registration_verifications.length > 0
+                  ) || []}
+                  dateRange={{ startDate, endDate }}
+                />
+              </div>
               {loadingApprovedRegistrations ? (
                 <div className="text-center py-8">
                   <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
