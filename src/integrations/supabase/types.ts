@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_permissions: {
+        Row: {
+          admin_user_id: string
+          created_at: string
+          id: string
+          module: string
+          permission_type: string
+          updated_at: string
+        }
+        Insert: {
+          admin_user_id: string
+          created_at?: string
+          id?: string
+          module: string
+          permission_type: string
+          updated_at?: string
+        }
+        Update: {
+          admin_user_id?: string
+          created_at?: string
+          id?: string
+          module?: string
+          permission_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_permissions_admin_user_id_fkey"
+            columns: ["admin_user_id"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_users: {
         Row: {
           created_at: string | null
@@ -268,6 +303,7 @@ export type Database = {
           created_at: string
           id: string
           registration_id: string
+          updated_at: string
           verified_at: string
           verified_by: string
         }
@@ -275,6 +311,7 @@ export type Database = {
           created_at?: string
           id?: string
           registration_id: string
+          updated_at?: string
           verified_at?: string
           verified_by: string
         }
@@ -282,6 +319,7 @@ export type Database = {
           created_at?: string
           id?: string
           registration_id?: string
+          updated_at?: string
           verified_at?: string
           verified_by?: string
         }
@@ -299,6 +337,7 @@ export type Database = {
         Row: {
           address: string
           agent_pro: string | null
+          approved_by: string | null
           approved_date: string | null
           category_id: string
           created_at: string | null
@@ -316,6 +355,7 @@ export type Database = {
         Insert: {
           address: string
           agent_pro?: string | null
+          approved_by?: string | null
           approved_date?: string | null
           category_id: string
           created_at?: string | null
@@ -333,6 +373,7 @@ export type Database = {
         Update: {
           address?: string
           agent_pro?: string | null
+          approved_by?: string | null
           approved_date?: string | null
           category_id?: string
           created_at?: string | null
