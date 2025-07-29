@@ -41,9 +41,8 @@ const AccountsManagement: React.FC<AccountsManagementProps> = ({
       const adminSession = localStorage.getItem('adminSession');
       if (adminSession) {
         const sessionData = JSON.parse(adminSession);
-        await supabase.rpc('set_admin_context', {
-          admin_role: sessionData.role
-        });
+        // Skip admin context for now since function doesn't exist
+        console.log('Admin context:', sessionData.role);
       }
     };
     setAdminContext().then(() => {
