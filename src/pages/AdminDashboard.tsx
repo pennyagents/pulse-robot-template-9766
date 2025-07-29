@@ -55,8 +55,23 @@ const AdminDashboard = () => {
     checkAdminSession();
   }, [navigate]);
 
-  // Fetch admin permissions from database - temporarily disabled until types are updated
-  const adminPermissions: any[] = [];
+  // Fetch admin permissions from database
+  const { data: adminPermissions } = useQuery({
+    queryKey: ['admin-permissions', adminSession?.id],
+    queryFn: async () => {
+      if (!adminSession?.id) return [];
+      const { data, error } = await supabase
+        .from('admin_permissions')
+        .select('module, permission_type')
+        .eq('admin_user_id', adminSession.id);
+      if (error) {
+        console.error('Error fetching admin permissions:', error);
+        return [];
+      }
+      return data || [];
+    },
+    enabled: !!adminSession?.id
+  });
 
   const handleLogout = () => {
     localStorage.removeItem('adminSession');
