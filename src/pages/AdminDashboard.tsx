@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -21,9 +22,7 @@ import ExpiredRegistrationsNotification from '@/components/admin/ExpiredRegistra
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const [adminSession, setAdminSession] = useState(null);
   const [activeTab, setActiveTab] = useState('registrations');
   const [isLoading, setIsLoading] = useState(true);
@@ -37,7 +36,6 @@ const AdminDashboard = () => {
       }
       try {
         const sessionData = JSON.parse(session);
-        // Check if session exists and has required fields
         if (sessionData && sessionData.username && sessionData.role) {
           setAdminSession(sessionData);
         } else {
@@ -60,14 +58,20 @@ const AdminDashboard = () => {
     queryKey: ['admin-permissions', adminSession?.id],
     queryFn: async () => {
       if (!adminSession?.id) return [];
+      
+      console.log('Fetching permissions for admin:', adminSession.id, adminSession.username);
+      
       const { data, error } = await supabase
         .from('admin_permissions')
         .select('module, permission_type')
         .eq('admin_user_id', adminSession.id);
+      
       if (error) {
         console.error('Error fetching admin permissions:', error);
         return [];
       }
+      
+      console.log('Fetched permissions from DB:', data);
       return data || [];
     },
     enabled: !!adminSession?.id
@@ -83,6 +87,12 @@ const AdminDashboard = () => {
   };
 
   const getPermissionsForModule = (module: string) => {
+    console.log(`Getting permissions for module: ${module}`, {
+      role: adminSession?.role,
+      adminId: adminSession?.id,
+      permissions: adminPermissions
+    });
+
     // Super admins have access to everything
     if (adminSession?.role === 'super_admin') {
       return {
@@ -97,7 +107,10 @@ const AdminDashboard = () => {
       canWrite: false,
       canDelete: false
     };
+    
     const modulePermissions = adminPermissions.filter(p => p.module === module);
+    console.log(`Permissions for module ${module}:`, modulePermissions);
+    
     return {
       canRead: modulePermissions.some(p => p.permission_type === 'read'),
       canWrite: modulePermissions.some(p => p.permission_type === 'write'),
@@ -127,6 +140,7 @@ const AdminDashboard = () => {
       const hasWritePermission = adminPermissions.some(p => p.permission_type === 'write');
       const hasDeletePermission = adminPermissions.some(p => p.permission_type === 'delete');
       const hasAdminManagePermission = adminPermissions.some(p => p.module === 'admin_users' && (p.permission_type === 'write' || p.permission_type === 'read'));
+      
       const dbPerms = {
         canRead: hasReadPermission,
         canWrite: hasWritePermission,
@@ -137,14 +151,14 @@ const AdminDashboard = () => {
       return dbPerms;
     }
 
-    // Fallback to default role-based permissions if no database permissions found
-    console.log('No database permissions found, using fallback for role:', role);
+    // Enhanced fallback permissions for local_admin when no database permissions are set
+    console.log('No database permissions found, using enhanced fallback for role:', role);
     switch (role) {
       case 'local_admin':
         return {
           canRead: true,
           canWrite: true,
-          canDelete: false,
+          canDelete: true, // Allow delete for local_admin
           canManageAdmins: false
         };
       case 'user_admin':
@@ -180,6 +194,8 @@ const AdminDashboard = () => {
     canDelete: false,
     canManageAdmins: false
   };
+
+  console.log('Final computed permissions:', permissions);
 
   return (
     <div className="min-h-screen bg-gray-50">
