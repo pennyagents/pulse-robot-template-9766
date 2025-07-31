@@ -75,17 +75,25 @@ const LandingPage = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
               <Link to="/categories" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-3 text-sm sm:text-sm">
-                  പുതുതായി രജിസ്ട്രേഷൻ ചെയ്യുക
+                <Button size="lg" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-4 text-sm sm:text-sm leading-tight">
+                  <span className="block sm:inline">
+                    പുതുതായി രജിസ്ട്രേഷൻ<br className="sm:hidden" /> ചെയ്യുക
+                  </span>
                 </Button>
               </Link>
               <Link to="/status" className="w-full sm:w-auto">
-                <Button variant="outline" size="lg" className="w-full sm:w-auto px-6 sm:px-8 py-3 text-sm font-bold bg-[#f77205] text-slate-50 hover:bg-[#e66204] sm:text-sm">
-                  മൊബൈൽ നമ്പർ ചെക്ക് ചെയ്യുക
+                <Button variant="outline" size="lg" className="w-full sm:w-auto px-6 sm:px-8 py-4 text-sm font-bold bg-[#f77205] text-slate-50 hover:bg-[#e66204] sm:text-sm leading-tight">
+                  <span className="block sm:inline">
+                    മൊബൈൽ നമ്പർ<br className="sm:hidden" /> ചെക്ക് ചെയ്യുക
+                  </span>
                 </Button>
               </Link>
               {utilitiesData && utilitiesData[0] && <a href={utilitiesData[0].url} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto px-6 sm:px-8 py-3 text-sm font-bold bg-green-600 text-white hover:bg-green-700 sm:text-sm">ഏജന്റ്  മാര്‍ക്ക് മാത്രം</Button>
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto px-6 sm:px-8 py-4 text-sm font-bold bg-green-600 text-white hover:bg-green-700 sm:text-sm leading-tight">
+                    <span className="block sm:inline">
+                      ഏജന്റ് മാർക്ക്<br className="sm:hidden" /> മാത്രം
+                    </span>
+                  </Button>
                 </a>}
             </div>
           </div>
