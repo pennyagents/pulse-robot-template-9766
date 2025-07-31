@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Users, FileText, TrendingUp, Bell, Phone, Mail, MapPin, Youtube } from 'lucide-react';
+import { Users, FileText, TrendingUp, Bell, Phone, Mail, MapPin, Youtube, ExternalLink } from 'lucide-react';
 const LandingPage = () => {
   const [announcements, setAnnouncements] = useState([]);
 
@@ -29,7 +29,7 @@ const LandingPage = () => {
     }
   });
 
-  // Fetch active utilities (for agents button)
+  // Fetch active utilities (for agents button and utilities section)
   const {
     data: utilitiesData
   } = useQuery({
@@ -38,9 +38,9 @@ const LandingPage = () => {
       const {
         data,
         error
-      } = await supabase.from('utilities').select('*').eq('is_active', true).order('created_at', {
-        ascending: false
-      }).limit(1);
+      } = await supabase.from('utilities').select('*').eq('is_active', true).order('name', {
+        ascending: true
+      });
       if (error) throw error;
       return data;
     }
@@ -88,8 +88,9 @@ const LandingPage = () => {
                   </span>
                 </Button>
               </Link>
+              {/* Agent Access - Use first utility for special agent access */}
               {utilitiesData && utilitiesData[0] && (
-                <a href={utilitiesData[0].url} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+                <Link to="/categories" className="w-full sm:w-auto">
                   <Card className="p-0 border-2 border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 transition-all duration-200 cursor-pointer shadow-lg hover:shadow-xl">
                     <CardContent className="p-4 text-center">
                       <div className="flex flex-col items-center gap-2">
@@ -107,12 +108,64 @@ const LandingPage = () => {
                       </div>
                     </CardContent>
                   </Card>
-                </a>
+                </Link>
               )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Utilities Section */}
+      {utilitiesData && utilitiesData.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-gradient-to-r from-indigo-50 to-blue-50">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
+              Useful Utilities
+            </h2>
+            <p className="text-base sm:text-lg text-gray-600 px-4">
+              Quick access to helpful tools and resources for your business needs
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {utilitiesData.map((utility) => (
+              <Card key={utility.id} className="group hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-blue-200 bg-white">
+                <CardContent className="p-6">
+                  <div className="flex flex-col items-center text-center space-y-4">
+                    <div className="p-3 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full group-hover:from-blue-200 group-hover:to-indigo-200 transition-colors">
+                      <ExternalLink className="h-6 w-6 text-blue-600" />
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">
+                        {utility.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-4 min-h-[2.5rem]">
+                        {utility.description || 'Click to access this utility'}
+                      </p>
+                    </div>
+                    
+                    <a
+                      href={utility.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full"
+                    >
+                      <Button 
+                        variant="outline" 
+                        className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border-blue-200 text-blue-700 font-medium group-hover:shadow-md transition-all"
+                      >
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Access Utility
+                      </Button>
+                    </a>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Job Card Special Offer */}
       <JobCardHighlight />
