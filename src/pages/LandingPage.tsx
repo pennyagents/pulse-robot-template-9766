@@ -89,35 +89,18 @@ const LandingPage = () => {
                 </Button>
               </Link>
               {/* Agent Access - Use first utility for special agent access */}
-              {utilitiesData && utilitiesData[0] && (
-                <Link to="/categories" className="w-full sm:w-auto">
+              {utilitiesData && utilitiesData[0] && <Link to="/categories" className="w-full sm:w-auto">
                   <Card className="p-0 border-2 border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 transition-all duration-200 cursor-pointer shadow-lg hover:shadow-xl">
-                    <CardContent className="p-4 text-center">
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="p-2 bg-green-100 rounded-full">
-                          <Users className="h-5 w-5 text-green-600" />
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-green-800 text-sm">
-                            ഏജന്റ് മാർക്ക് മാത്രം
-                          </h3>
-                          <p className="text-green-600 text-xs mt-1">
-                            {utilitiesData[0].description || 'Special access for agents'}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
+                    
                   </Card>
-                </Link>
-              )}
+                </Link>}
             </div>
           </div>
         </div>
       </div>
 
       {/* Utilities Section */}
-      {utilitiesData && utilitiesData.length > 0 && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-gradient-to-r from-indigo-50 to-blue-50">
+      {utilitiesData && utilitiesData.length > 0 && <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-gradient-to-r from-indigo-50 to-blue-50">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
               Useful Utilities
@@ -128,8 +111,7 @@ const LandingPage = () => {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {utilitiesData.map((utility) => (
-              <Card key={utility.id} className="group hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-blue-200 bg-white">
+            {utilitiesData.map(utility => <Card key={utility.id} className="group hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-blue-200 bg-white">
                 <CardContent className="p-6">
                   <div className="flex flex-col items-center text-center space-y-4">
                     <div className="p-3 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full group-hover:from-blue-200 group-hover:to-indigo-200 transition-colors">
@@ -145,27 +127,17 @@ const LandingPage = () => {
                       </p>
                     </div>
                     
-                    <a
-                      href={utility.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full"
-                    >
-                      <Button 
-                        variant="outline" 
-                        className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border-blue-200 text-blue-700 font-medium group-hover:shadow-md transition-all"
-                      >
+                    <a href={utility.url} target="_blank" rel="noopener noreferrer" className="w-full">
+                      <Button variant="outline" className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border-blue-200 text-blue-700 font-medium group-hover:shadow-md transition-all">
                         <ExternalLink className="h-4 w-4 mr-2" />
                         Access Utility
                       </Button>
                     </a>
                   </div>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
-        </div>
-      )}
+        </div>}
 
       {/* Job Card Special Offer */}
       <JobCardHighlight />
