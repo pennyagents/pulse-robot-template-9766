@@ -88,13 +88,27 @@ const LandingPage = () => {
                   </span>
                 </Button>
               </Link>
-              {utilitiesData && utilitiesData[0] && <a href={utilitiesData[0].url} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto px-6 sm:px-8 py-4 text-sm font-bold bg-green-600 text-white hover:bg-green-700 sm:text-sm leading-tight">
-                    <span className="block sm:inline">
-                      ഏജന്റ് മാർക്ക്<br className="sm:hidden" /> മാത്രം
-                    </span>
-                  </Button>
-                </a>}
+              {utilitiesData && utilitiesData[0] && (
+                <a href={utilitiesData[0].url} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+                  <Card className="p-0 border-2 border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 transition-all duration-200 cursor-pointer shadow-lg hover:shadow-xl">
+                    <CardContent className="p-4 text-center">
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="p-2 bg-green-100 rounded-full">
+                          <Users className="h-5 w-5 text-green-600" />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-green-800 text-sm">
+                            ഏജന്റ് മാർക്ക് മാത്രം
+                          </h3>
+                          <p className="text-green-600 text-xs mt-1">
+                            {utilitiesData[0].description || 'Special access for agents'}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </a>
+              )}
             </div>
           </div>
         </div>

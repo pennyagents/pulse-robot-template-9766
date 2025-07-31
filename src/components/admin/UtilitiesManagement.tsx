@@ -320,11 +320,13 @@ const UtilitiesManagement = () => {
                           {utility.url}
                         </span>
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
                           onClick={() => window.open(utility.url, '_blank')}
+                          className="bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
                         >
-                          <ExternalLink className="h-3 w-3" />
+                          <ExternalLink className="h-3 w-3 mr-1" />
+                          Home
                         </Button>
                       </div>
                     </TableCell>
