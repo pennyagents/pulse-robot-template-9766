@@ -65,10 +65,23 @@ const JobCardHighlight = () => {
               </div>
               
               <Link to={`/register/${jobCategory.id}`} className="block w-full max-w-sm mx-auto lg:mx-0">
-                <Button size="lg" className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold px-4 sm:px-6 lg:px-8 py-3 sm:py-4 text-sm sm:text-base lg:text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200">
-                  Register Now - Limited Time
-                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
+                <Card className="group cursor-pointer shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 border-2 border-orange-300 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
+                  <CardContent className="p-4 sm:p-6 text-center">
+                    <div className="flex flex-col items-center space-y-3">
+                      <div className="p-2 bg-white/20 rounded-full">
+                        <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-white font-bold text-sm sm:text-base lg:text-lg">
+                          Register Now - Limited Time
+                        </h3>
+                        <p className="text-white/90 text-xs sm:text-sm mt-1">
+                          Click to secure your spot today!
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </Link>
             </div>
             

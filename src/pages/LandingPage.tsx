@@ -73,27 +73,69 @@ const LandingPage = () => {
             <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto font-normal px-4">
               വിവിധ സ്വയം തൊഴിൽ അവസരങ്ങൾക്കായി രജിസ്റ്റർ ചെയ്യുകയും നിങ്ങളുടെ അപേക്ഷാ നില ട്രാക്ക് ചെയ്യുകയും ചെയ്യുക. ഭാവി കെട്ടിപ്പടുക്കുന്ന ആയിരക്കണക്കിന് സംരംഭകരോടൊപ്പം ചേരൂ.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-              <Link to="/categories" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-4 text-sm sm:text-sm leading-tight">
-                  <span className="block sm:inline">
-                    പുതുതായി രജിസ്ട്രേഷൻ<br className="sm:hidden" /> ചെയ്യുക
-                  </span>
-                </Button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 justify-center px-4 max-w-4xl mx-auto">
+              <Link to="/categories" className="w-full">
+                <Card className="group hover:shadow-xl transition-all duration-300 border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 cursor-pointer shadow-lg">
+                  <CardContent className="p-6 text-center">
+                    <div className="flex flex-col items-center space-y-4">
+                      <div className="p-3 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full group-hover:from-blue-200 group-hover:to-indigo-200 transition-colors">
+                        <Users className="h-8 w-8 text-blue-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-blue-900 mb-2">
+                          പുതുതായി രജിസ്ട്രേഷൻ ചെയ്യുക
+                        </h3>
+                        <p className="text-sm text-blue-700">
+                          വിവിധ സ്വയം തൊഴിൽ അവസരങ്ങൾക്കായി രജിസ്റ്റർ ചെയ്യുക
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </Link>
-              <Link to="/status" className="w-full sm:w-auto">
-                <Button variant="outline" size="lg" className="w-full sm:w-auto px-6 sm:px-8 py-4 text-sm font-bold bg-[#f77205] text-slate-50 hover:bg-[#e66204] sm:text-sm leading-tight">
-                  <span className="block sm:inline">
-                    മൊബൈൽ നമ്പർ<br className="sm:hidden" /> ചെക്ക് ചെയ്യുക
-                  </span>
-                </Button>
+              
+              <Link to="/status" className="w-full">
+                <Card className="group hover:shadow-xl transition-all duration-300 border-2 border-orange-200 bg-gradient-to-r from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100 cursor-pointer shadow-lg">
+                  <CardContent className="p-6 text-center">
+                    <div className="flex flex-col items-center space-y-4">
+                      <div className="p-3 bg-gradient-to-r from-orange-100 to-amber-100 rounded-full group-hover:from-orange-200 group-hover:to-amber-200 transition-colors">
+                        <Phone className="h-8 w-8 text-orange-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-orange-900 mb-2">
+                          മൊബൈൽ നമ്പർ ചെക്ക് ചെയ്യുക
+                        </h3>
+                        <p className="text-sm text-orange-700">
+                          നിങ്ങളുടെ അപേക്ഷാ നില പരിശോധിക്കുക
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </Link>
-              {/* Agent Access - Use first utility for special agent access */}
-              {utilitiesData && utilitiesData[0] && <Link to="/categories" className="w-full sm:w-auto">
-                  <Card className="p-0 border-2 border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 transition-all duration-200 cursor-pointer shadow-lg hover:shadow-xl">
-                    
+
+              {/* Agent Access Card */}
+              {utilitiesData && utilitiesData[0] && (
+                <Link to="/categories" className="w-full">
+                  <Card className="group hover:shadow-xl transition-all duration-300 border-2 border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 cursor-pointer shadow-lg">
+                    <CardContent className="p-6 text-center">
+                      <div className="flex flex-col items-center space-y-4">
+                        <div className="p-3 bg-gradient-to-r from-green-100 to-emerald-100 rounded-full group-hover:from-green-200 group-hover:to-emerald-200 transition-colors">
+                          <ExternalLink className="h-8 w-8 text-green-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold text-green-900 mb-2">
+                            Agent Access
+                          </h3>
+                          <p className="text-sm text-green-700">
+                            Special access for registered agents
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
                   </Card>
-                </Link>}
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -111,31 +153,32 @@ const LandingPage = () => {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {utilitiesData.map(utility => <Card key={utility.id} className="group hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-blue-200 bg-white">
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="p-3 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full group-hover:from-blue-200 group-hover:to-indigo-200 transition-colors">
-                      <ExternalLink className="h-6 w-6 text-blue-600" />
+            {utilitiesData.map(utility => (
+              <a key={utility.id} href={utility.url} target="_blank" rel="noopener noreferrer" className="w-full">
+                <Card className="group hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-blue-200 bg-white cursor-pointer h-full">
+                  <CardContent className="p-6">
+                    <div className="flex flex-col items-center text-center space-y-4">
+                      <div className="p-3 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full group-hover:from-blue-200 group-hover:to-indigo-200 transition-colors">
+                        <ExternalLink className="h-6 w-6 text-blue-600" />
+                      </div>
+                      
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">
+                          {utility.name}
+                        </h3>
+                        <p className="text-sm text-gray-600 min-h-[2.5rem]">
+                          {utility.description || 'Click to access this utility'}
+                        </p>
+                      </div>
+                      
+                      <div className="text-xs text-blue-600 font-medium mt-auto">
+                        Click to access →
+                      </div>
                     </div>
-                    
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">
-                        {utility.name}
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-4 min-h-[2.5rem]">
-                        {utility.description || 'Click to access this utility'}
-                      </p>
-                    </div>
-                    
-                    <a href={utility.url} target="_blank" rel="noopener noreferrer" className="w-full">
-                      <Button variant="outline" className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border-blue-200 text-blue-700 font-medium group-hover:shadow-md transition-all">
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Access Utility
-                      </Button>
-                    </a>
-                  </div>
-                </CardContent>
-              </Card>)}
+                  </CardContent>
+                </Card>
+              </a>
+            ))}
           </div>
         </div>}
 
