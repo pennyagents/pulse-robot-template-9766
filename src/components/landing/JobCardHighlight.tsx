@@ -1,12 +1,15 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Star, ArrowRight } from 'lucide-react';
 const JobCardHighlight = () => {
+  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
   const {
     data: jobCategory
   } = useQuery({
@@ -64,7 +67,7 @@ const JobCardHighlight = () => {
                 </Card>
               </div>
               
-              <Link to={`/register/${jobCategory.id}`} className="block w-full max-w-sm mx-auto lg:mx-0">
+              <div onClick={() => setShowModal(true)} className="block w-full max-w-sm mx-auto lg:mx-0">
                 <Card className="group cursor-pointer shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 border-2 border-orange-300 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
                   <CardContent className="p-4 sm:p-6 text-center">
                     <div className="flex flex-col items-center space-y-3">
@@ -82,7 +85,7 @@ const JobCardHighlight = () => {
                     </div>
                   </CardContent>
                 </Card>
-              </Link>
+              </div>
             </div>
             
             {jobCategory.popup_image_url && <div className="flex-shrink-0 w-full lg:w-auto flex justify-center">
@@ -96,6 +99,38 @@ const JobCardHighlight = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal for registration confirmation */}
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">
+              {jobCategory?.name} Registration
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              You're about to register for {jobCategory?.name}. This special offer is available for a limited time only!
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-3 sm:gap-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowModal(false)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={() => {
+                navigate(`/register/${jobCategory?.id}`);
+                setShowModal(false);
+              }}
+              className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+            >
+              Continue Registration
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>;
 };
 export default JobCardHighlight;

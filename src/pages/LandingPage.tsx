@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
@@ -8,9 +8,18 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Users, FileText, TrendingUp, Bell, Phone, Mail, MapPin, Youtube, ExternalLink } from 'lucide-react';
 const LandingPage = () => {
+  const navigate = useNavigate();
   const [announcements, setAnnouncements] = useState([]);
+  const [selectedCard, setSelectedCard] = useState<{
+    type: string;
+    title: string;
+    description: string;
+    link?: string;
+    url?: string;
+  } | null>(null);
 
   // Fetch active announcements
   const {
@@ -73,8 +82,8 @@ const LandingPage = () => {
             <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto font-normal px-4">
               വിവിധ സ്വയം തൊഴിൽ അവസരങ്ങൾക്കായി രജിസ്റ്റർ ചെയ്യുകയും നിങ്ങളുടെ അപേക്ഷാ നില ട്രാക്ക് ചെയ്യുകയും ചെയ്യുക. ഭാവി കെട്ടിപ്പടുക്കുന്ന ആയിരക്കണക്കിന് സംരംഭകരോടൊപ്പം ചേരൂ.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 justify-center px-4 max-w-4xl mx-auto">
-              <Link to="/categories" className="w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 justify-center px-4 max-w-3xl mx-auto">
+              <div onClick={() => setSelectedCard({ type: 'register', title: 'പുതുതായി രജിസ്ട്രേഷൻ ചെയ്യുക', description: 'വിവിധ സ്വയം തൊഴിൽ അവസരങ്ങൾക്കായി രജിസ്റ്റർ ചെയ്യുക', link: '/categories' })} className="w-full">
                 <Card className="group hover:shadow-xl transition-all duration-300 border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 cursor-pointer shadow-lg">
                   <CardContent className="p-6 text-center">
                     <div className="flex flex-col items-center space-y-4">
@@ -92,9 +101,9 @@ const LandingPage = () => {
                     </div>
                   </CardContent>
                 </Card>
-              </Link>
+              </div>
               
-              <Link to="/status" className="w-full">
+              <div onClick={() => setSelectedCard({ type: 'status', title: 'മൊബൈൽ നമ്പർ ചെക്ക് ചെയ്യുക', description: 'നിങ്ങളുടെ അപേക്ഷാ നില പരിശോധിക്കുക', link: '/status' })} className="w-full">
                 <Card className="group hover:shadow-xl transition-all duration-300 border-2 border-orange-200 bg-gradient-to-r from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100 cursor-pointer shadow-lg">
                   <CardContent className="p-6 text-center">
                     <div className="flex flex-col items-center space-y-4">
@@ -112,30 +121,7 @@ const LandingPage = () => {
                     </div>
                   </CardContent>
                 </Card>
-              </Link>
-
-              {/* Agent Access Card */}
-              {utilitiesData && utilitiesData[0] && (
-                <Link to="/categories" className="w-full">
-                  <Card className="group hover:shadow-xl transition-all duration-300 border-2 border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 cursor-pointer shadow-lg">
-                    <CardContent className="p-6 text-center">
-                      <div className="flex flex-col items-center space-y-4">
-                        <div className="p-3 bg-gradient-to-r from-green-100 to-emerald-100 rounded-full group-hover:from-green-200 group-hover:to-emerald-200 transition-colors">
-                          <ExternalLink className="h-8 w-8 text-green-600" />
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-bold text-green-900 mb-2">
-                            Agent Access
-                          </h3>
-                          <p className="text-sm text-green-700">
-                            Special access for registered agents
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              )}
+              </div>
             </div>
           </div>
         </div>
@@ -154,7 +140,7 @@ const LandingPage = () => {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {utilitiesData.map(utility => (
-              <a key={utility.id} href={utility.url} target="_blank" rel="noopener noreferrer" className="w-full">
+              <div key={utility.id} onClick={() => setSelectedCard({ type: 'utility', title: utility.name, description: utility.description || 'Click to access this utility', url: utility.url })} className="w-full">
                 <Card className="group hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-blue-200 bg-white cursor-pointer h-full">
                   <CardContent className="p-6">
                     <div className="flex flex-col items-center text-center space-y-4">
@@ -177,7 +163,7 @@ const LandingPage = () => {
                     </div>
                   </CardContent>
                 </Card>
-              </a>
+              </div>
             ))}
           </div>
         </div>}
@@ -356,8 +342,44 @@ const LandingPage = () => {
               <p className="text-blue-100 text-sm sm:text-base">Kerala, India - 676101</p>
             </div>
           </div>
-        </div>
       </div>
+
+      {/* Modal for card actions */}
+      <Dialog open={!!selectedCard} onOpenChange={() => setSelectedCard(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">
+              {selectedCard?.title}
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              {selectedCard?.description}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-3 sm:gap-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setSelectedCard(null)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={() => {
+                if (selectedCard?.link) {
+                  navigate(selectedCard.link);
+                } else if (selectedCard?.url) {
+                  window.open(selectedCard.url, '_blank');
+                }
+                setSelectedCard(null);
+              }}
+              className="flex-1"
+            >
+              {selectedCard?.type === 'utility' ? 'Open Utility' : 'Continue'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
     </div>;
 };
 export default LandingPage;
