@@ -150,6 +150,15 @@ const RegistrationsManagement = ({
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: UpdateStatusParams) => {
       console.log('Updating status for registration:', id, 'to:', status);
+      
+      // Get current admin username
+      let adminUsername = 'admin';
+      const adminSession = localStorage.getItem('adminSession');
+      if (adminSession) {
+        const sessionData = JSON.parse(adminSession);
+        adminUsername = sessionData.username || 'admin';
+      }
+      
       const updateData: any = {
         status,
         updated_at: new Date().toISOString()
@@ -158,14 +167,7 @@ const RegistrationsManagement = ({
       // Set approved_date and approved_by when status is approved
       if (status === 'approved') {
         updateData.approved_date = new Date().toISOString();
-        // Get current admin session
-        const adminSession = localStorage.getItem('adminSession');
-        if (adminSession) {
-          const sessionData = JSON.parse(adminSession);
-          updateData.approved_by = sessionData.username;
-        } else {
-          updateData.approved_by = 'self'; // For self-approval (free registrations)
-        }
+        updateData.approved_by = adminUsername;
       }
       
       // Clear approved_by and approved_date when status is changed to pending
@@ -174,7 +176,12 @@ const RegistrationsManagement = ({
         updateData.approved_date = null;
       }
       
-      const { error } = await supabase.from('registrations').update(updateData).eq('id', id);
+      // Use match instead of eq to ensure proper where clause
+      const { error } = await supabase
+        .from('registrations')
+        .update(updateData)
+        .match({ id });
+      
       if (error) {
         console.error('Error updating status:', error);
         throw error;
