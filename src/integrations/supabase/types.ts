@@ -452,6 +452,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      update_registration_status: {
+        Args: {
+          p_registration_id: string
+          p_status: Database["public"]["Enums"]["application_status"]
+          p_admin_username?: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       admin_role: "super_admin" | "local_admin" | "user_admin"
