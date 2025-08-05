@@ -149,37 +149,57 @@ const RegistrationsManagement = ({
   // Update status mutation
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: UpdateStatusParams) => {
-      console.log('Updating status for registration:', id, 'to:', status);
+      console.log('=== Starting status update ===');
+      console.log('Registration ID:', id);
+      console.log('New status:', status);
       
       // Get current admin username
       let adminUsername = 'admin';
       const adminSession = localStorage.getItem('adminSession');
       if (adminSession) {
-        const sessionData = JSON.parse(adminSession);
-        adminUsername = sessionData.username || 'admin';
+        try {
+          const sessionData = JSON.parse(adminSession);
+          adminUsername = sessionData.username || 'admin';
+        } catch (e) {
+          console.error('Error parsing admin session:', e);
+        }
       }
+      console.log('Admin username:', adminUsername);
       
-      // Use the database function for secure updates
-      const { data, error } = await supabase
-        .rpc('update_registration_status', {
-          p_registration_id: id,
-          p_status: status,
-          p_admin_username: adminUsername
-        });
-      
-      if (error) {
-        console.error('Error updating status:', error);
+      try {
+        // Use the database function for secure updates
+        console.log('Calling update_registration_status function...');
+        const { data, error } = await supabase
+          .rpc('update_registration_status', {
+            p_registration_id: id,
+            p_status: status,
+            p_admin_username: adminUsername
+          });
+        
+        console.log('RPC response data:', data);
+        console.log('RPC response error:', error);
+        
+        if (error) {
+          console.error('Supabase RPC error:', error);
+          throw new Error(`Database error: ${error.message}`);
+        }
+        
+        // Type-safe access to the response
+        const response = data as { success?: boolean; error?: string } | null;
+        console.log('Parsed response:', response);
+        
+        if (response && response.success === false) {
+          console.error('Function returned error:', response.error);
+          throw new Error(response.error || 'Update failed');
+        }
+        
+        console.log('=== Status update completed successfully ===');
+        return response;
+      } catch (error) {
+        console.error('=== Status update failed ===');
+        console.error('Error details:', error);
         throw error;
       }
-      
-      // Type-safe access to the response
-      const response = data as { success?: boolean; error?: string } | null;
-      if (response && response.success === false) {
-        console.error('Update failed:', response.error);
-        throw new Error(response.error || 'Update failed');
-      }
-      
-      console.log('Status updated successfully');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
