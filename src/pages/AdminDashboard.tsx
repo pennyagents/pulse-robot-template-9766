@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { LogOut, Users, Grid3X3, MapPin, Bell, Shield, BarChart3, Settings, Wallet } from 'lucide-react';
+import { LogOut, Users, Grid3X3, MapPin, Bell, Shield, BarChart3, Settings, Wallet, FileText } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import RegistrationsManagement from '@/components/admin/RegistrationsManagement';
@@ -17,6 +17,7 @@ import AdminPermissionsManagement from '@/components/admin/AdminPermissionsManag
 import ReportsManagement from '@/components/admin/ReportsManagement';
 import UtilitiesManagement from '@/components/admin/UtilitiesManagement';
 import AccountsManagement from '@/components/admin/AccountsManagement';
+import ApplicationsManagement from '@/components/admin/ApplicationsManagement';
 import PendingRegistrationsPopup from '@/components/admin/PendingRegistrationsPopup';
 import ExpiredRegistrationsNotification from '@/components/admin/ExpiredRegistrationsNotification';
 
@@ -24,7 +25,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [adminSession, setAdminSession] = useState(null);
-  const [activeTab, setActiveTab] = useState('registrations');
+  const [activeTab, setActiveTab] = useState('applications');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -248,7 +249,11 @@ const AdminDashboard = () => {
             </div>
           ) : (
             <div className="mb-6">
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2 mb-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-2 mb-6">
+                {getPermissionsForModule('registrations').canRead && <button onClick={() => setActiveTab('applications')} className={`flex flex-col items-center gap-2 p-4 rounded-lg border transition-all ${activeTab === 'applications' ? 'bg-primary text-primary-foreground border-primary shadow-lg' : 'bg-card hover:bg-accent border-border hover:shadow-md'}`}>
+                    <FileText className="h-5 w-5" />
+                    <span className="text-xs font-medium text-center">Applications</span>
+                  </button>}
                 {getPermissionsForModule('registrations').canRead && <button onClick={() => setActiveTab('registrations')} className={`flex flex-col items-center gap-2 p-4 rounded-lg border transition-all ${activeTab === 'registrations' ? 'bg-primary text-primary-foreground border-primary shadow-lg' : 'bg-card hover:bg-accent border-border hover:shadow-md'}`}>
                     <Users className="h-5 w-5" />
                     <span className="text-xs font-medium text-center">Registrations</span>
@@ -290,6 +295,10 @@ const AdminDashboard = () => {
             <RegistrationsManagement permissions={permissions} />
           ) : (
             <>
+              {getPermissionsForModule('registrations').canRead && <TabsContent value="applications">
+                  <ApplicationsManagement />
+                </TabsContent>}
+
               {getPermissionsForModule('registrations').canRead && <TabsContent value="registrations">
                   <RegistrationsManagement permissions={permissions} />
                 </TabsContent>}
