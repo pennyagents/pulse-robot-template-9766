@@ -159,29 +159,24 @@ const RegistrationsManagement = ({
         adminUsername = sessionData.username || 'admin';
       }
       
-      // Direct update with explicit status and timestamps
-      const updateData: any = {
-        status,
-        updated_at: new Date().toISOString()
-      };
-      
-      if (status === 'approved') {
-        updateData.approved_date = new Date().toISOString();
-        updateData.approved_by = adminUsername;
-      } else if (status === 'pending') {
-        updateData.approved_by = null;
-        updateData.approved_date = null;
-      }
-      
-      // Use a direct SQL update bypassing RLS for admin operations
-      const { error } = await supabase
-        .from('registrations')
-        .update(updateData)
-        .eq('id', id);
+      // Use the database function for secure updates
+      const { data, error } = await supabase
+        .rpc('update_registration_status', {
+          p_registration_id: id,
+          p_status: status,
+          p_admin_username: adminUsername
+        });
       
       if (error) {
         console.error('Error updating status:', error);
         throw error;
+      }
+      
+      // Type-safe access to the response
+      const response = data as { success?: boolean; error?: string } | null;
+      if (response && response.success === false) {
+        console.error('Update failed:', response.error);
+        throw new Error(response.error || 'Update failed');
       }
       
       console.log('Status updated successfully');
